@@ -73,6 +73,7 @@ class Person:
 	def add_child(self,child):
 		if child:
 			self.children.append(child)
+			print(child.get_full_name()+" "+str(child.get_age()))
 			self.children.sort(key=lambda x: x.get_age(), reverse=True)
 
 	def add_children(self,children):
@@ -84,8 +85,7 @@ class Person:
 	def update_age(self):
 		today = datetime.date.today()
 		bdate = datetime.date(*(int(s) for s in self.birth_date.split('-')))
-		self.age = today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
-		print(self.get_full_name()+" "+str(self.age))
+		return today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
 
 	#### CHECKERS ####
 
