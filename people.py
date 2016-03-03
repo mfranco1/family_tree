@@ -1,3 +1,5 @@
+import datetime
+
 class Person:
 	def __init__(self,f_name,l_name,gender,birth_date="unknown",father="",mother=""):
 		self.f_name = f_name
@@ -9,6 +11,7 @@ class Person:
 		self.death_date = ""
 		self.spouse = ""
 		self.children = []
+		self.age = self.update_age()
 
 	#### GETTERS ####
 
@@ -47,6 +50,9 @@ class Person:
 			return self.children[order]
 		return "Has No Children"
 
+	def get_age(self):
+		return self.age
+
 	#### SETTERS ####
 
 	def set_birth_date(self,birth_date):
@@ -65,11 +71,21 @@ class Person:
 		self.spouse = spouse
 
 	def add_child(self,child):
-		self.children.append(child)
+		if child:
+			self.children.append(child)
+			self.children.sort(key=lambda x: x.get_age(), reverse=True)
 
 	def add_children(self,children):
-		for child in children:
-			self.children.append(child)
+		if children:
+			for child in children:
+				self.children.append(child)
+			self.children.sort(key=lambda x: x.get_age(), reverse=True)
+
+	def update_age(self):
+		today = datetime.date.today()
+		bdate = datetime.date(*(int(s) for s in self.birth_date.split('-')))
+		self.age = today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
+		print(self.get_full_name()+" "+str(self.age))
 
 	#### CHECKERS ####
 

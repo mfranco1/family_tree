@@ -107,7 +107,7 @@ class NewTree(Frame):
         self.gender_label.grid(row=2,column=0)
         self.gender_entry = Entry(data_frame, bd =5)
         self.gender_entry.grid(row=2,column=1)
-        self.birth_date_label = Label(data_frame,text="Birthdate YYYY/MM/DD")
+        self.birth_date_label = Label(data_frame,text="Birthdate YYYY-MM-DD")
         self.birth_date_label.grid(row=3,column=0)
         self.birth_date_entry = Entry(data_frame, bd =5)
         self.birth_date_entry.grid(row=3,column=1)
