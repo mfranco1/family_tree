@@ -1,3 +1,5 @@
+import re
+import pickle
 from tkinter import *
 from people import *
 
@@ -58,7 +60,7 @@ class HomePage(Frame):
         #title label to be replaced with image
         title = StringVar()
         title_label = Label(title_frame,textvariable=title,relief=RAISED)
-        title.set("WELCOME TO FAMILY FOREST beta!")
+        title.set("WELCOME TO FAMILY FOREST pre-alpha!")
         title_label.pack()
 
         #options frame
@@ -135,22 +137,68 @@ class NewTree(Frame):
         help_button.grid(row=0,column=2)
 
     def process_entries(self):
+        self.sanitize_entries()
+        if self.entries_are_safe():
+            fname = self.f_name_entry.get()
+            lname = self.l_name_entry.get()
+            gender = self.gender_entry.get()
+            birthdate = self.birth_date_entry.get()
+            father = find_person(self.controller.get_family_tree(),self.father_entry.get())
+            if not father:
+                father = self.father_entry.get()
+            mother = find_person(self.controller.get_family_tree(),self.mother_entry.get())
+            if not mother:
+                mother = self.mother_entry.get()
+            spouse = find_person(self.controller.get_family_tree(),self.spouse_entry.get())
+            if not spouse:
+                spouse = self.spouse_entry.get()
+            p = make_person(fname,lname,gender,birthdate,father,mother)
+            p.set_spouse(spouse)
+            return p
+
+    def sanitize_entries(self):
+        fname = self.f_name_entry.get()
+        fname = fname.split(' ', 1)[0]
+        fname = fname.title()
+        self.f_name_entry.delete(0,END)
+        self.f_name_entry.insert(0,fname)
+
+        lname = self.l_name_entry.get()
+        lname = lname.split(' ', 1)[0]
+        lname = lname.title()
+        self.l_name_entry.delete(0,END)
+        self.l_name_entry.insert(0,lname)
+
+        gender = self.gender_entry.get()
+        gender = gender.split(' ', 1)[0]
+        gender = gender.title()
+        self.gender_entry.delete(0,END)
+        self.gender_entry.insert(0,gender)
+
+    def entries_are_safe(self):
         fname = self.f_name_entry.get()
         lname = self.l_name_entry.get()
         gender = self.gender_entry.get()
         birthdate = self.birth_date_entry.get()
-        father = find_person(self.controller.get_family_tree(),self.father_entry.get())
-        if not father:
-            father = self.father_entry.get()
-        mother = find_person(self.controller.get_family_tree(),self.mother_entry.get())
-        if not mother:
-            mother = self.mother_entry.get()
-        spouse = find_person(self.controller.get_family_tree(),self.spouse_entry.get())
-        if not spouse:
-            spouse = self.spouse_entry.get()
-        p = make_person(fname,lname,gender,birthdate,father,mother)
-        p.set_spouse(spouse)
-        return p
+
+        reg=re.compile('^[A-Z][a-z]+$')
+        gend=re.compile('^[M,m]ale$|^[F,f]emale$')
+        datex=re.compile('^(\d{4})-(\d{2})-(\d{2})$')
+
+        if not reg.match(fname):
+            print("bad fname")
+            return False
+        if not reg.match(lname):
+            print("bad lname")
+            return False
+        if not gend.match(gender):
+            print("bad gender")
+            return False
+        if not datex.match(birthdate):
+            print("bad bdate")
+            return False
+
+        return True
 
 
 class EditTree(Frame):

@@ -73,7 +73,6 @@ class Person:
 	def add_child(self,child):
 		if child:
 			self.children.append(child)
-			print(child.get_full_name()+" "+str(child.get_age()))
 			self.children.sort(key=lambda x: x.get_age(), reverse=True)
 
 	def add_children(self,children):
