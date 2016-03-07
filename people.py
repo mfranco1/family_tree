@@ -1,4 +1,5 @@
 import datetime
+import re
 
 class Person:
 	def __init__(self,f_name,l_name,gender,birth_date="unknown",father="",mother=""):
@@ -106,6 +107,34 @@ class Person:
 
 def make_person(f_name,l_name,gender,birth_date="unknown",father="",mother=""):
 	return Person(f_name,l_name,gender,birth_date,father,mother)
+
+def is_valid_fname(f_name):
+	reg=re.compile('^[A-Z][a-z]+$')
+	if not reg.match(f_name):
+		print("bad fname")
+		return False
+	return True
+
+def is_valid_lname(l_name):
+	reg=re.compile('^[A-Z][a-z]+$')
+	if not reg.match(l_name):
+		print("bad lname")
+		return False
+	return True
+
+def is_valid_gender(gender):
+	reg=re.compile('^[M,m]ale$|^[F,f]emale$')
+	if not reg.match(gender):
+		print("bad gender")
+		return False
+	return True
+
+def is_valid_bdate(bdate):
+	reg=re.compile('^(\d{4})-(\d{2})-(\d{2})$')
+	if not reg.match(bdate):
+		print("bad bdate")
+		return False
+	return True
 
 def find_person(list,name):
 	for p in list:

@@ -1,4 +1,3 @@
-import re
 import pickle
 from tkinter import *
 from people import *
@@ -47,6 +46,9 @@ class Root(Tk):
             link_parent_child(self.family_tree,person)
             link_spouse(self.family_tree,person)
 
+    def load_family_tree(self):
+        x=0
+
 class HomePage(Frame):
 
     def __init__(self, parent, controller):
@@ -68,9 +70,9 @@ class HomePage(Frame):
         option_frame.grid(row=1,column=0)
 
         #home option buttons
-        new_tree_button = Button(option_frame,text="New Tree",command=lambda:controller.show_frame("NewTree"))
+        new_tree_button = Button(option_frame,text="New Person",command=lambda:controller.show_frame("NewTree"))
         new_tree_button.grid(row=0,column=0)
-        edit_tree_button = Button(option_frame,text="Edit Tree",command=lambda:controller.show_frame("EditTree"))
+        edit_tree_button = Button(option_frame,text="Edit Person",command=lambda:controller.show_frame("EditTree"))
         edit_tree_button.grid(row=0,column=1)
         delete_tree_button = Button(option_frame,text="Delete Tree",command=lambda:controller.show_frame("DeleteTree"))
         delete_tree_button.grid(row=0,column=2)
@@ -91,36 +93,43 @@ class NewTree(Frame):
         Frame.__init__(self, parent)
         self.controller = controller
 
-        label = Label(self, text="New Tree")
+        label = Label(self, text="New Person")
         label.grid(row=0,column=0)
 
         #get person info
         data_frame = Frame(self)
         data_frame.grid(row=1,column=0)
+
         self.f_name_label = Label(data_frame,text="First Name")
         self.f_name_label.grid(row=0,column=0)
         self.f_name_entry = Entry(data_frame, bd =5)
         self.f_name_entry.grid(row=0,column=1)
+
         self.l_name_label = Label(data_frame,text="Last Name")
         self.l_name_label.grid(row=1,column=0)
         self.l_name_entry = Entry(data_frame, bd =5)
         self.l_name_entry.grid(row=1,column=1)
+
         self.gender_label = Label(data_frame,text="Gender")
         self.gender_label.grid(row=2,column=0)
         self.gender_entry = Entry(data_frame, bd =5)
         self.gender_entry.grid(row=2,column=1)
+
         self.birth_date_label = Label(data_frame,text="Birthdate YYYY-MM-DD")
         self.birth_date_label.grid(row=3,column=0)
         self.birth_date_entry = Entry(data_frame, bd =5)
         self.birth_date_entry.grid(row=3,column=1)
+
         self.father_label = Label(data_frame,text="Father's Name")
         self.father_label.grid(row=4,column=0)
         self.father_entry = Entry(data_frame, bd =5)
         self.father_entry.grid(row=4,column=1)
+
         self.mother_label = Label(data_frame,text="Mother's Name")
         self.mother_label.grid(row=5,column=0)
         self.mother_entry = Entry(data_frame, bd =5)
         self.mother_entry.grid(row=5,column=1)
+
         self.spouse_label = Label(data_frame,text="Spouse's Name")
         self.spouse_label.grid(row=6,column=0)
         self.spouse_entry = Entry(data_frame, bd =5)
@@ -181,23 +190,14 @@ class NewTree(Frame):
         gender = self.gender_entry.get()
         birthdate = self.birth_date_entry.get()
 
-        reg=re.compile('^[A-Z][a-z]+$')
-        gend=re.compile('^[M,m]ale$|^[F,f]emale$')
-        datex=re.compile('^(\d{4})-(\d{2})-(\d{2})$')
-
-        if not reg.match(fname):
-            print("bad fname")
+        if not is_valid_fname(fname):
             return False
-        if not reg.match(lname):
-            print("bad lname")
+        if not is_valid_lname(lname):
             return False
-        if not gend.match(gender):
-            print("bad gender")
+        if not is_valid_gender(gender):
             return False
-        if not datex.match(birthdate):
-            print("bad bdate")
+        if not is_valid_bdate(birthdate):
             return False
-
         return True
 
 
@@ -207,26 +207,69 @@ class EditTree(Frame):
         Frame.__init__(self, parent)
         self.controller = controller
 
-        label = Label(self, text="Edit Tree")
+        label = Label(self, text="Edit Person")
         label.grid(row=0,column=0)
+
+        #edit form
+        data_frame = Frame(self)
+        data_frame.grid(row=1,column=0)
+
+        self.full_name_label = Label(data_frame,text="Full Name")
+        self.full_name_label.grid(row=0,column=0)
+        self.full_name_entry = Entry(data_frame, bd =5)
+        self.full_name_entry.grid(row=0,column=1)
+
+        self.f_name_label = Label(data_frame,text="First Name")
+        self.f_name_label.grid(row=1,column=0)
+        self.f_name_entry = Entry(data_frame, bd =5)
+        self.f_name_entry.grid(row=1,column=1)
+        self.f_name_edit = Button(data_frame,text="Edit",command=lambda:self.edit_person("temp","temp"))
+        self.f_name_edit.grid(row=1,column=2)
+
+        self.l_name_label = Label(data_frame,text="Last Name")
+        self.l_name_label.grid(row=2,column=0)
+        self.l_name_entry = Entry(data_frame, bd =5)
+        self.l_name_entry.grid(row=2,column=1)
+        self.l_name_edit = Button(data_frame,text="Edit",command=lambda:self.edit_person("temp","temp"))
+        self.l_name_edit.grid(row=2,column=2)
+
+        self.spouse_label = Label(data_frame,text="Spouse's Name")
+        self.spouse_label.grid(row=3,column=0)
+        self.spouse_entry = Entry(data_frame, bd =5)
+        self.spouse_entry.grid(row=3,column=1)
+        self.spouse_edit = Button(data_frame,text="Edit",command=lambda:self.edit_person("temp","temp"))
+        self.spouse_edit.grid(row=3,column=2)
+
+        self.child_label = Label(data_frame,text="Child's Name")
+        self.child_label.grid(row=4,column=0)
+        self.child_entry = Entry(data_frame, bd =5)
+        self.child_entry.grid(row=4,column=1)
+        self.child_edit = Button(data_frame,text="Edit",command=lambda:self.edit_person("temp","temp"))
+        self.child_edit.grid(row=4,column=2)
+
+        self.death_label = Label(data_frame,text="Last Name")
+        self.death_label.grid(row=5,column=0)
+        self.death_entry = Entry(data_frame, bd =5)
+        self.death_entry.grid(row=5,column=1)
+        self.death_edit = Button(data_frame,text="Edit",command=lambda:self.edit_person("temp","temp"))
+        self.death_edit.grid(row=5,column=2)
 
         #edit tree option buttons
         option_frame = Frame(self)
         option_frame.grid(row=2,column=0)
-        link_children_button = Button(option_frame,text="Link Children",command=lambda:self.link_children())
-        link_children_button.grid(row=0,column=0)
-        edit_person_button = Button(option_frame,text="Edit Person",command=lambda:self.edit_person("temp","temp"))
+        edit_person_button = Button(option_frame,text="Edit All",command=lambda:self.edit_person(controller.get_family_tree(),self.full_name_entry.get()))
         edit_person_button.grid(row=0,column=1)
         edit_tree_home_button = Button(option_frame,text="Cancel",command=lambda:controller.show_frame("HomePage"))
         edit_tree_home_button.grid(row=0,column=2)
         help_button = Button(option_frame,text="Help",command=lambda:controller.show_frame("HelpPage"))
         help_button.grid(row=0,column=3)
 
-    def link_children(self):
-        x=0
-
     def edit_person(self,list,name):
-        x=0
+        if not find_person(list,name):
+            print(self.full_name_entry.get()+" is not in the Tree")
+            return False
+        print(self.full_name_entry.get()+" has been edited successfully")
+        return True
 
 
 class DeleteTree(Frame):
