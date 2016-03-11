@@ -15,6 +15,7 @@ class Root(Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        self.title("Family Forest pre-alpha")
         self.frames = {}
         self.family_tree = []
 
@@ -78,12 +79,12 @@ class HomePage(Frame):
         delete_tree_button.grid(row=0,column=2)
         traverse_tree_button = Button(option_frame,text="Traverse",command=lambda:controller.show_frame("TraversePage"))
         traverse_tree_button.grid(row=0,column=3)
-        open_tree_button = Button(option_frame,text="Open Tree",command=lambda:self.temp())
+        open_tree_button = Button(option_frame,text="Open Tree",command=lambda:self.open_filedialogue())
         open_tree_button.grid(row=1,column=0)
-        save_tree_button = Button(option_frame,text="Save Tree",command=lambda:self.temp())
+        save_tree_button = Button(option_frame,text="Save Tree",command=lambda:self.open_filedialogue())
         save_tree_button.grid(row=1,column=1)
 
-    def temp(self):
+    def open_filedialogue(self):
         x=0
 
 
@@ -185,18 +186,13 @@ class NewTree(Frame):
         self.gender_entry.insert(0,gender)
 
     def entries_are_safe(self):
-        fname = self.f_name_entry.get()
-        lname = self.l_name_entry.get()
-        gender = self.gender_entry.get()
-        birthdate = self.birth_date_entry.get()
-
-        if not is_valid_fname(fname):
+        if not is_valid_fname(self.f_name_entry.get()):
             return False
-        if not is_valid_lname(lname):
+        if not is_valid_lname(self.l_name_entry.get()):
             return False
-        if not is_valid_gender(gender):
+        if not is_valid_gender(self.gender_entry.get()):
             return False
-        if not is_valid_bdate(birthdate):
+        if not is_valid_bdate(self.birth_date_entry.get()):
             return False
         return True
 
